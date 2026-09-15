@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import api from "@/lib/api";
 import { Product } from "@/lib/types";
-import { ShoppingCart, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Package } from "lucide-react";
 
 export default function ProductsPage() {
   const { user, loading } = useAuth();
@@ -57,13 +57,11 @@ export default function ProductsPage() {
         product_id: Number(product_id),
         quantity,
       }));
-
       const res = await api.post("/orders/", {
         items,
         customer_note: note || undefined,
         customer_address: address || undefined,
       });
-
       setSuccess(
         `Order #${res.data.id} placed! ${
           res.data.branch
@@ -85,16 +83,23 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Products</h1>
+
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+          <p className="text-gray-400 text-sm mt-1">Select items to place your order</p>
+        </div>
 
         {success && (
-          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-6 font-medium">
-            ✅ {success}
+          <div className="bg-gray-900 text-white px-5 py-4 rounded-xl mb-6 flex items-center gap-3">
+            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-gray-900 text-xs font-bold">✓</span>
+            </div>
+            {success}
           </div>
         )}
         {error && (
-          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-6">
-            ❌ {error}
+          <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-xl mb-6 text-sm">
+            {error}
           </div>
         )}
 
@@ -104,70 +109,85 @@ export default function ProductsPage() {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-5"
+                className="bg-white rounded-2xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all"
               >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                    {product.description && (
-                      <p className="text-sm text-gray-500 mt-0.5">
-                        {product.description}
-                      </p>
-                    )}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Package size={18} className="text-gray-500" />
                   </div>
-                  <span className="text-blue-600 font-bold">
+                  <span className="text-lg font-bold text-gray-900">
                     Rs. {product.price.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 mt-4">
-                  <button
-                    onClick={() => updateCart(product.id, -1)}
-                    className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
-                  >
-                    <Minus size={14} />
-                  </button>
-                  <span className="w-8 text-center font-medium">
-                    {cart[product.id] || 0}
-                  </span>
-                  <button
-                    onClick={() => updateCart(product.id, 1)}
-                    className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
-                  >
-                    <Plus size={14} />
-                  </button>
+                <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                {product.description && (
+                  <p className="text-xs text-gray-400 mb-4">{product.description}</p>
+                )}
+
+                <div className="flex items-center justify-between mt-auto">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => updateCart(product.id, -1)}
+                      className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all"
+                    >
+                      <Minus size={13} />
+                    </button>
+                    <span className="w-6 text-center font-semibold text-gray-900 text-sm">
+                      {cart[product.id] || 0}
+                    </span>
+                    <button
+                      onClick={() => updateCart(product.id, 1)}
+                      className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-all"
+                    >
+                      <Plus size={13} className="text-white" />
+                    </button>
+                  </div>
+                  {cart[product.id] > 0 && (
+                    <span className="text-xs text-gray-400 font-medium">
+                      Rs. {(product.price * cart[product.id]).toLocaleString()}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
           </div>
 
           {/* Order Summary */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-fit sticky top-20">
-            <h2 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-              <ShoppingCart size={20} />
-              Order Summary
-            </h2>
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit sticky top-20">
+            <div className="flex items-center gap-2 mb-5">
+              <ShoppingCart size={18} className="text-gray-900" />
+              <h2 className="font-bold text-gray-900">Order Summary</h2>
+              {cartCount > 0 && (
+                <span className="ml-auto bg-gray-900 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {cartCount}
+                </span>
+              )}
+            </div>
 
             {cartCount === 0 ? (
-              <p className="text-gray-400 text-sm">No items selected</p>
+              <div className="text-center py-8">
+                <ShoppingCart size={32} className="text-gray-200 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">No items selected</p>
+              </div>
             ) : (
-              <div className="space-y-2 mb-4">
+              <div className="space-y-2 mb-5">
                 {Object.entries(cart).map(([id, qty]) => {
                   const product = products.find((p) => p.id === Number(id));
                   return (
                     <div key={id} className="flex justify-between text-sm">
-                      <span className="text-gray-600">
-                        {product?.name} × {qty}
+                      <span className="text-gray-500">
+                        {product?.name} <span className="text-gray-400">×{qty}</span>
                       </span>
-                      <span className="font-medium">
+                      <span className="font-medium text-gray-900">
                         Rs. {((product?.price || 0) * qty).toLocaleString()}
                       </span>
                     </div>
                   );
                 })}
-                <div className="border-t pt-2 flex justify-between font-bold">
-                  <span>Total</span>
-                  <span className="text-blue-600">
+                <div className="border-t border-gray-100 pt-3 mt-3 flex justify-between">
+                  <span className="font-semibold text-gray-900">Total</span>
+                  <span className="font-bold text-gray-900">
                     Rs. {cartTotal.toLocaleString()}
                   </span>
                 </div>
@@ -179,23 +199,23 @@ export default function ProductsPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Delivery address (optional)"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 placeholder-gray-400"
               />
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Order note (optional) — e.g. payment issue, delivery query..."
+                placeholder="Order note — e.g. payment issue, delivery query..."
                 rows={3}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 placeholder-gray-400 resize-none"
               />
             </div>
 
             <button
               onClick={placeOrder}
               disabled={cartCount === 0 || ordering}
-              className="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+              className="w-full mt-4 bg-gray-900 text-white py-3 rounded-xl font-semibold text-sm hover:bg-gray-800 disabled:opacity-40 transition-all active:scale-[0.98]"
             >
-              {ordering ? "Placing order..." : `Place Order (${cartCount} items)`}
+              {ordering ? "Placing order..." : "Place Order"}
             </button>
           </div>
         </div>

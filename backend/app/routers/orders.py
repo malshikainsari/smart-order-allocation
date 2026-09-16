@@ -54,12 +54,36 @@ def create_order(
         customer_lng=customer_lng,
     )
 
+        # ML classify note
+    note_category = None
+    note_confidence = None
+    if payload.customer_note and payload.customer_note.strip():
+        try:
+            import joblib, os
+            model_path = os.path.join(os.path.dirname(__file__), "../../ml/model.pkl")
+            vec_path = os.path.join(os.path.dirname(__file__), "../../ml/vectorizer.pkl")
+            _model = joblib.load(model_path)
+            _vec = joblib.load(vec_path)
+            X = _vec.transform([payload.customer_note])
+            prediction = _model.predict(X)[0]
+            proba = _model.predict_proba(X)[0]
+            confidence = round(float(max(proba)) * 100, 2)
+            if confidence >= 60.0:
+                note_category = prediction
+            else:
+                note_category = "Unclassified (Low Confidence)"
+            note_confidence = confidence
+        except Exception:
+            pass
+
     # Create order
     order = Order(
         customer_id=current_user.id,
         branch_id=best_branch.id if best_branch else None,
         status=OrderStatus.allocated if best_branch else OrderStatus.pending,
         customer_note=payload.customer_note,
+        note_category=note_category,
+        note_confidence=note_confidence,
         total_amount=total_amount,
         customer_lat=customer_lat,
         customer_lng=customer_lng,

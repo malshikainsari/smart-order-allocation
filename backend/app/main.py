@@ -29,7 +29,7 @@ app.add_middleware(
     "http://localhost:3000",
     "http://localhost:3001",
     "https://smart-order-allocation.vercel.app",
-    "https://smart-order-allocation-2efwwlgjr-malshika-insaris-projects.vercel.app",
+    "https://smart-order-allocation-2efvwlgjr-malshika-insaris-projects.vercel.app",
 ],
     allow_credentials=True,
     allow_methods=["*"],

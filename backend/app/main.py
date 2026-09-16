@@ -25,7 +25,12 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://smart-order-allocation.vercel.app",
+    "https://smart-order-allocation-2efwwlgjr-malshika-insaris-projects.vercel.app",
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

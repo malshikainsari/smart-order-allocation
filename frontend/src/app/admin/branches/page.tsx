@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import api from "@/lib/api";
 import { Branch, Product } from "@/lib/types";
+import { MapPin, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 
 export default function AdminBranchesPage() {
   const { user, loading } = useAuth();
@@ -39,7 +40,7 @@ export default function AdminBranchesPage() {
     if (!stockUpdate.product_id || stockUpdate.quantity < 0) return;
     try {
       await api.post(`/branches/${branchId}/stock`, stockUpdate);
-      setMessage("Stock updated successfully!");
+      setMessage("Stock updated!");
       loadStock(branchId);
       setTimeout(() => setMessage(""), 3000);
     } catch (err: any) {
@@ -50,9 +51,7 @@ export default function AdminBranchesPage() {
   const toggleBranch = async (branchId: number) => {
     try {
       const res = await api.patch(`/branches/${branchId}/toggle`);
-      setBranches((prev) =>
-        prev.map((b) => (b.id === branchId ? res.data : b))
-      );
+      setBranches((prev) => prev.map((b) => (b.id === branchId ? res.data : b)));
     } catch (err: any) {
       alert(err.response?.data?.detail || "Toggle failed");
     }
@@ -61,107 +60,112 @@ export default function AdminBranchesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Branches</h1>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Branches</h1>
+          <p className="text-gray-400 text-sm mt-1">Manage branch stock and availability</p>
+        </div>
 
         {message && (
-          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-6">
-            ✅ {message}
+          <div className="bg-gray-900 text-white px-5 py-3 rounded-xl mb-6 text-sm flex items-center gap-2">
+            <span className="w-4 h-4 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-gray-900 text-xs font-bold">✓</span>
+            </span>
+            {message}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {branches.map((branch) => (
-            <div
-              key={branch.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-bold text-gray-900 text-lg">{branch.name}</h3>
-                  <p className="text-sm text-gray-500">📍 {branch.address}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {branch.latitude}, {branch.longitude}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <span
-                    className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+            <div key={branch.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              {/* Branch Header */}
+              <div className="px-6 py-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg">{branch.name}</h3>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <MapPin size={12} className="text-gray-400" />
+                      <span className="text-sm text-gray-400">{branch.address}</span>
+                    </div>
+                    <p className="text-xs text-gray-300 mt-0.5">
+                      {branch.latitude}, {branch.longitude}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
                       branch.is_active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {branch.is_active ? "Active" : "Inactive"}
-                  </span>
-                  <button
-                    onClick={() => toggleBranch(branch.id)}
-                    className="text-xs text-gray-500 hover:text-red-500 transition"
-                  >
-                    {branch.is_active ? "Deactivate" : "Activate"}
-                  </button>
+                        ? "bg-green-50 text-green-700 border-green-100"
+                        : "bg-gray-100 text-gray-500 border-gray-200"
+                    }`}>
+                      {branch.is_active ? "Active" : "Inactive"}
+                    </span>
+                    <button
+                      onClick={() => toggleBranch(branch.id)}
+                      className="text-xs text-gray-400 hover:text-gray-900 transition-colors"
+                    >
+                      {branch.is_active ? "Deactivate" : "Activate"}
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Stock Section */}
-              <div className="border-t pt-4">
+              {/* Stock Toggle */}
+              <div className="border-t border-gray-50">
                 <button
                   onClick={() =>
                     selectedBranch === branch.id
                       ? setSelectedBranch(null)
                       : loadStock(branch.id)
                   }
-                  className="text-sm text-blue-600 hover:underline font-medium mb-3 block"
+                  className="w-full px-6 py-3 flex items-center justify-between text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
                 >
-                  {selectedBranch === branch.id ? "Hide Stock ▲" : "View Stock ▼"}
+                  <span>Stock Management</span>
+                  {selectedBranch === branch.id
+                    ? <ChevronUp size={16} className="text-gray-400" />
+                    : <ChevronDown size={16} className="text-gray-400" />
+                  }
                 </button>
 
                 {selectedBranch === branch.id && (
-                  <div className="space-y-4">
+                  <div className="px-6 pb-5 space-y-4 border-t border-gray-50">
                     {/* Current Stock */}
-                    {stock[branch.id] && stock[branch.id].length > 0 ? (
-                      <div className="space-y-1">
-                        {stock[branch.id].map((item) => (
-                          <div
-                            key={item.product_id}
-                            className="flex justify-between text-sm"
-                          >
+                    <div className="pt-4 space-y-2">
+                      {stock[branch.id] && stock[branch.id].length > 0 ? (
+                        stock[branch.id].map((item) => (
+                          <div key={item.product_id} className="flex justify-between items-center text-sm">
                             <span className="text-gray-600">{item.product_name}</span>
-                            <span
-                              className={`font-medium ${
-                                item.quantity < 10
-                                  ? "text-red-500"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              {item.quantity} units
-                              {item.quantity < 10 && " ⚠️"}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              {item.quantity < 10 && (
+                                <AlertTriangle size={12} className="text-yellow-500" />
+                              )}
+                              <span className={`font-medium ${
+                                item.quantity < 10 ? "text-yellow-600" : "text-gray-900"
+                              }`}>
+                                {item.quantity} units
+                              </span>
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-400">No stock data</p>
-                    )}
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-400 py-2">No stock data available</p>
+                      )}
+                    </div>
 
                     {/* Update Stock */}
-                    <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                      <p className="text-xs font-medium text-gray-600">Update Stock</p>
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                        Update Stock
+                      </p>
                       <select
                         value={stockUpdate.product_id}
-                        onChange={(e) =>
-                          setStockUpdate((prev) => ({
-                            ...prev,
-                            product_id: Number(e.target.value),
-                          }))
-                        }
-                        className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={(e) => setStockUpdate((prev) => ({
+                          ...prev, product_id: Number(e.target.value),
+                        }))}
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 bg-white text-gray-700 accent-gray-700"
                       >
                         <option value={0}>Select product</option>
                         {products.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
+                          <option key={p.id} value={p.id}>{p.name}</option>
                         ))}
                       </select>
                       <div className="flex gap-2">
@@ -169,18 +173,15 @@ export default function AdminBranchesPage() {
                           type="number"
                           min={0}
                           value={stockUpdate.quantity}
-                          onChange={(e) =>
-                            setStockUpdate((prev) => ({
-                              ...prev,
-                              quantity: Number(e.target.value),
-                            }))
-                          }
+                          onChange={(e) => setStockUpdate((prev) => ({
+                            ...prev, quantity: Number(e.target.value),
+                          }))}
                           placeholder="Quantity"
-                          className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
                         />
                         <button
                           onClick={() => updateStock(branch.id)}
-                          className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition"
+                          className="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
                         >
                           Update
                         </button>

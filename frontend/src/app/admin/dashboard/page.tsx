@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         ) : (
           <>
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
               {statCards.map(({ label, value, icon: Icon }) => (
                 <div key={label} className="bg-white rounded-2xl border border-gray-100 p-5 hover:border-gray-200 transition-all">
                   <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Quick Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3">
               <a href="/admin/orders" className="bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-sm transition-all group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">

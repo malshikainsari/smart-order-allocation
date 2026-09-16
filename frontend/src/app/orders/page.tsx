@@ -69,14 +69,14 @@ export default function OrdersPage() {
             {orders.map((order) => (
               <div key={order.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                 {/* Header */}
-                <div className="px-6 py-4 flex items-center justify-between border-b border-gray-50">
+                <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-gray-50">
                   <div className="flex items-center gap-3">
                     <span className="font-bold text-gray-900">Order #{order.id}</span>
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusConfig[order.status].class}`}>
                       {statusConfig[order.status].label}
                     </span>
                   </div>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-xs text-gray-400">
                     {new Date(order.created_at).toLocaleDateString("en-GB", {
                       day: "numeric", month: "short", year: "numeric",
                       hour: "2-digit", minute: "2-digit"
@@ -85,7 +85,7 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Body */}
-                <div className="px-6 py-4 space-y-4">
+                <div className="px-4 sm:px-6 py-4 space-y-4">
                   {/* Items */}
                   <div className="space-y-2">
                     {order.items.map((item, i) => (

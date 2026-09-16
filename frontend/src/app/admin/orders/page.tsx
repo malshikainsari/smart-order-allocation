@@ -84,22 +84,39 @@ export default function AdminOrdersPage() {
             {filtered.map((order) => (
               <div key={order.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                 {/* Header */}
-                <div className="px-6 py-4 flex items-center justify-between border-b border-gray-50">
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-gray-900">Order #{order.id}</span>
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusConfig[order.status].class}`}>
-                      {statusConfig[order.status].label}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-400">
-                      {new Date(order.created_at).toLocaleDateString("en-GB", {
-                        day: "numeric", month: "short", year: "numeric",
-                      })}
-                    </span>
-                    <span className="font-bold text-gray-900">
-                      Rs. {order.total_amount.toLocaleString()}
-                    </span>
+                <div className="px-5 sm:px-6 py-4 border-b border-gray-50">
+                  <div className="flex items-center justify-between gap-3">
+                    
+                    {/* Order + Status */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-bold text-gray-900 whitespace-nowrap">
+                        Order #{order.id}
+                      </span>
+
+                      <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${
+                          statusConfig[order.status].class
+                        }`}
+                      >
+                        {statusConfig[order.status].label}
+                      </span>
+                    </div>
+
+                    {/* Date + Amount */}
+                    <div className="flex flex-col items-end flex-shrink-0">
+                      <span className="text-xs text-gray-400 whitespace-nowrap">
+                        {new Date(order.created_at).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+
+                      <span className="font-bold text-gray-900 whitespace-nowrap">
+                        Rs. {order.total_amount.toLocaleString()}
+                      </span>
+                    </div>
+
                   </div>
                 </div>
 
@@ -108,13 +125,15 @@ export default function AdminOrdersPage() {
                   {/* Items */}
                   <div className="space-y-1.5">
                     {order.items.map((item, i) => (
-                      <div key={i} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
+                      <div
+                        key={i}
+                        className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm"
+                      >
+                        <span className="text-gray-600 min-w-0">
                           {item.product_name}
-                          <span className="text-gray-400 ml-1">×{item.quantity}</span>
-                        </span>
-                        <span className="text-gray-900 font-medium">
-                          Rs. {(item.unit_price * item.quantity).toLocaleString()}
+                          <span className="text-gray-400 ml-1">
+                            ×{item.quantity}
+                          </span>
                         </span>
                       </div>
                     ))}

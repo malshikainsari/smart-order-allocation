@@ -75,7 +75,7 @@ export default function AdminBranchesPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
           {branches.map((branch) => (
             <div key={branch.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               {/* Branch Header */}

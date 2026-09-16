@@ -57,7 +57,7 @@ export default function AdminOrdersPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">All Orders</h1>
             <p className="text-gray-400 text-sm mt-1">{orders.length} total orders</p>
@@ -68,7 +68,7 @@ export default function AdminOrdersPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search orders..."
-              className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 w-64 bg-white"
+              className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 w-full sm:w-64 bg-white"
             />
           </div>
         </div>

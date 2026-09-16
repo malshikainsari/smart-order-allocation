@@ -215,6 +215,6 @@ Every order note is automatically classified at order creation time. The categor
 
 ## Live Application
 
-- **Frontend:** https://smart-order-allocation-2efvwlgjr-malshika-insaris-projects.vercel.app
+- **Frontend:** https://smart-order-allocation.vercel.app
 - **Backend API:** https://smart-order-allocation.onrender.com
 - **GitHub:** https://github.com/malshikainsari/smart-order-allocation
